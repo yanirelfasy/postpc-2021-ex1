@@ -23,7 +23,7 @@ public class EditTitleActivity extends AppCompatActivity {
   // `private boolean isEditing = false;`
   // in onCreate() set `this.isEditing` to `true` once the user starts editing, set to `false` once done editing
   // in onBackPressed() check `if(this.isEditing)` to understand what to do
-  private String currentText = "";
+  private boolean isEditing = false;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,15 +52,17 @@ public class EditTitleActivity extends AppCompatActivity {
       2. animate in the "done edit" FAB
       to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
        */
+      this.isEditing = true;
       editTextTitle.setText(textViewTitle.getText().toString());
       textViewTitle.setVisibility(View.INVISIBLE);
       fabStartEdit.setVisibility(View.INVISIBLE);
       editTextTitle.setVisibility(View.VISIBLE);
       fabEditDone.setVisibility(View.VISIBLE);
-      // Focus and show keyboard
+      // Focus
       editTextTitle.requestFocus();
       // Placing cursor at the end of the text
       editTextTitle.setSelection(editTextTitle.getText().toString().length());
+      // Show keyboard
       InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
       imm.showSoftInput(editTextTitle, InputMethodManager.SHOW_IMPLICIT);
     });
@@ -74,6 +76,7 @@ public class EditTitleActivity extends AppCompatActivity {
 
       to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
        */
+      this.isEditing = false;
       String strEditText = editTextTitle.getText().toString();
       textViewTitle.setText(strEditText);
       editTextTitle.setVisibility(View.INVISIBLE);
@@ -89,19 +92,24 @@ public class EditTitleActivity extends AppCompatActivity {
     // BACK button was clicked
     /*
     TODO:
-    if user is now editing, tap on BACK will revert the edit. do the following:
-    1. hide the edit-text
-    2. show the static text-view with previous text (discard user's input)
     3. animate out the "done-edit" FAB
     4. animate in the "start-edit" FAB
 
-    else, the user isn't editing. continue normal BACK tap behavior to exit the screen.
-    call `super.onBackPressed()`
-
-    notice:
-    to work with views, you will need to find them first.
-    to find views call `findViewById()` in a same way like in `onCreate()`
      */
+    EditText editTextTitle = findViewById(R.id.editTextPageTitle);
+    FloatingActionButton fabEditDone = findViewById(R.id.fab_edit_done);
+    FloatingActionButton fabStartEdit = findViewById(R.id.fab_start_edit);
+    TextView textViewTitle = findViewById(R.id.textViewPageTitle);
+
+    if(this.isEditing){
+      editTextTitle.setVisibility(View.INVISIBLE);
+      fabEditDone.setVisibility(View.INVISIBLE);
+      textViewTitle.setVisibility(View.VISIBLE);
+      fabStartEdit.setVisibility(View.VISIBLE);
+    }
+    else{
+      super.onBackPressed();
+    }
   }
 
   private void hideKeyboard(View view) {
