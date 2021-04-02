@@ -1,7 +1,10 @@
 package android.exercise.mini.interactions;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -20,6 +23,7 @@ public class EditTitleActivity extends AppCompatActivity {
   // `private boolean isEditing = false;`
   // in onCreate() set `this.isEditing` to `true` once the user starts editing, set to `false` once done editing
   // in onBackPressed() check `if(this.isEditing)` to understand what to do
+  private String currentText = "";
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +50,19 @@ public class EditTitleActivity extends AppCompatActivity {
       TODO:
       1. animate out the "start edit" FAB
       2. animate in the "done edit" FAB
-      3. hide the static title (text-view)
-      4. show the editable title (edit-text)
-      5. make sure the editable title's text is the same as the static one
-      6. optional (HARD!) make the keyboard to open with the edit-text focused,
-          so the user can start typing without the need another click on the edit-text
-
       to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
        */
+      editTextTitle.setText(textViewTitle.getText().toString());
+      textViewTitle.setVisibility(View.INVISIBLE);
+      fabStartEdit.setVisibility(View.INVISIBLE);
+      editTextTitle.setVisibility(View.VISIBLE);
+      fabEditDone.setVisibility(View.VISIBLE);
+      // Focus and show keyboard
+      editTextTitle.requestFocus();
+      // Placing cursor at the end of the text
+      editTextTitle.setSelection(editTextTitle.getText().toString().length());
+      InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+      imm.showSoftInput(editTextTitle, InputMethodManager.SHOW_IMPLICIT);
     });
 
     // handle clicks on "done edit"
@@ -62,13 +71,16 @@ public class EditTitleActivity extends AppCompatActivity {
       TODO:
       1. animate out the "done edit" FAB
       2. animate in the "start edit" FAB
-      3. take the text from the user's input in the edit-text and put it inside the static text-view
-      4. show the static title (text-view)
-      5. hide the editable title (edit-text)
-      6. make sure that the keyboard is closed
 
       to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
        */
+      String strEditText = editTextTitle.getText().toString();
+      textViewTitle.setText(strEditText);
+      editTextTitle.setVisibility(View.INVISIBLE);
+      fabEditDone.setVisibility(View.INVISIBLE);
+      this.hideKeyboard(v);
+      textViewTitle.setVisibility(View.VISIBLE);
+      fabStartEdit.setVisibility(View.VISIBLE);
     });
   }
 
@@ -90,5 +102,12 @@ public class EditTitleActivity extends AppCompatActivity {
     to work with views, you will need to find them first.
     to find views call `findViewById()` in a same way like in `onCreate()`
      */
+  }
+
+  private void hideKeyboard(View view) {
+    InputMethodManager manager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+    if (manager != null) {
+      manager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
   }
 }
