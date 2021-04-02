@@ -15,14 +15,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class EditTitleActivity extends AppCompatActivity {
 
-  // TODO:
-  //  you can add fields to this class. those fields will be accessibly inside any method
-  //  (like `onCreate()` and `onBackPressed()` methods)
-  // for any field, make sure to set it's initial value. You CAN'T write a custom constructor
-  // for example, you can add this field:
-  // `private boolean isEditing = false;`
-  // in onCreate() set `this.isEditing` to `true` once the user starts editing, set to `false` once done editing
-  // in onBackPressed() check `if(this.isEditing)` to understand what to do
   private boolean isEditing = false;
 
   @Override
@@ -46,16 +38,22 @@ public class EditTitleActivity extends AppCompatActivity {
 
     // handle clicks on "start edit"
     fabStartEdit.setOnClickListener(v -> {
-      /*
-      TODO:
-      1. animate out the "start edit" FAB
-      2. animate in the "done edit" FAB
-      to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
-       */
       this.isEditing = true;
       editTextTitle.setText(textViewTitle.getText().toString());
       textViewTitle.setVisibility(View.INVISIBLE);
-      fabStartEdit.setVisibility(View.INVISIBLE);
+      fabEditDone.animate().alpha(0).start();
+      fabStartEdit.animate()
+              .alpha(0)
+              .setDuration(300L)
+              .withEndAction(() -> {
+                fabStartEdit.setVisibility(View.INVISIBLE);
+                fabEditDone.setVisibility(View.VISIBLE);
+                fabEditDone.animate()
+                        .alpha(1)
+                        .setDuration(300L)
+                        .start();
+              })
+              .start();
       editTextTitle.setVisibility(View.VISIBLE);
       fabEditDone.setVisibility(View.VISIBLE);
       // Focus
@@ -69,18 +67,23 @@ public class EditTitleActivity extends AppCompatActivity {
 
     // handle clicks on "done edit"
     fabEditDone.setOnClickListener(v -> {
-      /*
-      TODO:
-      1. animate out the "done edit" FAB
-      2. animate in the "start edit" FAB
-
-      to complete (1.) & (2.), start by just changing visibility. only add animations after everything else is ready
-       */
       this.isEditing = false;
       String strEditText = editTextTitle.getText().toString();
       textViewTitle.setText(strEditText);
       editTextTitle.setVisibility(View.INVISIBLE);
-      fabEditDone.setVisibility(View.INVISIBLE);
+      fabStartEdit.animate().alpha(0).start();
+      fabEditDone.animate()
+              .alpha(0)
+              .setDuration(300L)
+              .withEndAction(() -> {
+                fabEditDone.setVisibility(View.INVISIBLE);
+                fabStartEdit.setVisibility(View.VISIBLE);
+                fabStartEdit.animate()
+                        .alpha(1)
+                        .setDuration(300L)
+                        .start();
+              })
+              .start();
       this.hideKeyboard(v);
       textViewTitle.setVisibility(View.VISIBLE);
       fabStartEdit.setVisibility(View.VISIBLE);
@@ -103,9 +106,22 @@ public class EditTitleActivity extends AppCompatActivity {
 
     if(this.isEditing){
       editTextTitle.setVisibility(View.INVISIBLE);
-      fabEditDone.setVisibility(View.INVISIBLE);
+      editTextTitle.setVisibility(View.INVISIBLE);
+      fabStartEdit.animate().alpha(0).start();
+      fabEditDone.animate()
+              .alpha(0)
+              .setDuration(300L)
+              .withEndAction(() -> {
+                fabEditDone.setVisibility(View.INVISIBLE);
+                fabStartEdit.setVisibility(View.VISIBLE);
+                fabStartEdit.animate()
+                        .alpha(1)
+                        .setDuration(300L)
+                        .start();
+              })
+              .start();
       textViewTitle.setVisibility(View.VISIBLE);
-      fabStartEdit.setVisibility(View.VISIBLE);
+      isEditing = false;
     }
     else{
       super.onBackPressed();
